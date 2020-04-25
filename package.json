@@ -1,0 +1,27 @@
+{
+  "name": "wechat-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev ./src/app.ts",
+    "build": "tsc",
+    "buildRun": "tsc & node ./dist/app.js",
+    "start": "node ./dist/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/lowdb": "^1.0.9",
+    "@types/raven": "^2.5.3",
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "lowdb": "^1.0.0",
+    "moment": "^2.24.0",
+    "qrcode-terminal": "^0.12.0",
+    "wechaty": "^0.38.4"
+  }
+}
