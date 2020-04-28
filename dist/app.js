@@ -14,97 +14,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const qrcode_terminal_1 = __importDefault(require("qrcode-terminal"));
 const wechaty_1 = require("wechaty");
-const axios_1 = __importDefault(require("axios"));
-const baseUrl = `https://res.wx.qq.com/`;
-const myid = "";
-console.log(`
-/* -------------------------------- Jun's Bot ------------------------------- */
-`);
-let bot;
-const token = wechaty_1.config.token;
-if (token) {
-    wechaty_1.log.info("Wechaty", "TOKEN: %s", token);
-    bot = wechaty_1.Wechaty.instance({ profile: token });
-    const ioClient = new wechaty_1.IoClient({
-        token,
-        wechaty: bot,
-    });
-    ioClient.start().catch((e) => {
-        wechaty_1.log.error("Wechaty", "IoClient.init() exception: %s", e);
-        bot.emit("error", e);
-    });
-}
-else {
-    wechaty_1.log.verbose("Wechaty", "TOKEN: N/A");
-    bot = wechaty_1.Wechaty.instance();
-}
-bot
-    .on("scan", (qrcode, status) => {
-    qrcode_terminal_1.default.generate(qrcode, { small: true });
-    console.log(`${status}: ${qrcode} - Scan QR Code of the url to login:`);
-})
-    .on("logout", (user) => wechaty_1.log.info("Bot", `${user.name()} logouted`))
-    .on("error", (e) => wechaty_1.log.info("Bot", "error: %s", e))
-    .on("login", function (user) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const msg = `${user.name()} logined`;
-        wechaty_1.log.info("Bot", msg);
-        wechaty_1.log.info("Bot - - - logged ", JSON.stringify(msg, null, 2));
-        yield this.say(msg);
-    });
+const exchange_1 = require("./functions/exchange");
+const gasPrice_1 = require("./functions/gasPrice");
+const covidNS_1 = require("./functions/covidNS");
+const wechat = wechaty_1.Wechaty.instance();
+wechat.on("scan", (qrcode, status) => {
+    qrcode_terminal_1.default.generate(qrcode);
+    console.log(`Scan QR Code to login: ${status}\nhttps://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrcode)}`);
 });
-/**
- * Global Event: message
- */
-let busyIndicator = false;
-let busyAnnouncement = `Automatic Reply: I cannot read your message because I'm busy now, will talk to you when I get back.`;
-bot.on("message", function (msg) {
-    return __awaiter(this, void 0, void 0, function* () {
-        wechaty_1.log.info("Bot", "(message) %s", msg);
-        console.log(JSON.stringify(msg, null, 2));
-        const filehelper = bot.Contact.load("filehelper");
-        const sender = msg.from();
-        const receiver = msg.to();
-        const text = msg.text();
-        const room = msg.room();
-        // if (msg.age() > 60) {
-        //   log.info('Bot', 'on(message) skip age(%d) > 60 seconds: %s', msg.age(), msg)
-        //   return
-        // }
-        if (!sender || !receiver) {
-            return;
-        }
-        // if (text.match(/\/ping/g)) {
-        // console.log("text /ping matched!");
-        // const response = await axios.get("https://bigfacenas.ddns.me/ping");
-        // await msg.say(response.data);
-        // }
-        if (room) {
-            const topic = yield room.topic();
-            console.log("topic - ", topic);
-            if (text.match(/-ping/)) {
-                console.log("text -ping matched!");
-                const response = yield axios_1.default.get("https://bigfacenas.ddns.me/ping");
-                msg.say(response.data);
-            }
-            if (text.match(/-gas/)) {
-                console.log("text -ping matched!");
-                const response = yield axios_1.default.get("http://bigfacenas.ddns.me:6003/");
-                msg.say(response.data);
-            }
-        }
-        if (!room) {
-            console.log("personal - ");
-            if (text.match(/-ping/)) {
-                console.log("text -ping matched!");
-                const response = yield axios_1.default.get("https://bigfacenas.ddns.me/ping");
-                msg.say(response.data);
-            }
-        }
-        if (sender.type() !== bot.Contact.Type.Personal) {
-            return;
-        }
-    });
-});
-bot.start().catch((e) => console.error(e));
+wechat.on("login", (user) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`User ${user} logined`);
+    wechat.say("Web client logged in !!!!");
+}));
+wechat.on("message", (msg) => __awaiter(void 0, void 0, void 0, function* () {
+    const sender = msg.from();
+    const receiver = msg.to();
+    const text = msg.text();
+    const room = msg.room();
+    console.log(text);
+    // match (?|？)汇率 1加元
+    if (text.match(exchange_1.exchangeRegexp)) {
+        msg.say(yield exchange_1.getExchangeText(text));
+    }
+    if (text.match(gasPrice_1.gasRegexp)) {
+        msg.say(yield gasPrice_1.getGasPricesText());
+    }
+    if (text.match(covidNS_1.covidNewsRegexp)) {
+        msg.say(yield covidNS_1.getCovidNewsText());
+    }
+}));
+wechat.start();
 //# sourceMappingURL=app.js.map

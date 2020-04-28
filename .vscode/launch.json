@@ -10,7 +10,7 @@
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
       "preLaunchTask": "npm: build",
-      "program": "${workspaceFolder}/dist/components/Exchange/index.js",
+      "program": "${workspaceFolder}/src/functions/exchange.ts",
       "outFiles": ["${workspaceFolder}/**/*.js"]
     }
   ]
