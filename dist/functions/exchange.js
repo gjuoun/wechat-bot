@@ -59,23 +59,23 @@ exports.exchangeRegexp = /^(\?|\uff1f)\u6c47\u7387\s*(?<rest>.+)?$/;
 // match ?汇率 1美元换人民币
 const exchangeDetailRegexp = /^(?<amount>\d+)\s*(?<from>.+)\s*\u6362\s*(?<to>.+)\s*$/;
 function getExchangeText(text) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         const exchangeMatch = text.match(exports.exchangeRegexp);
         // ?汇率
-        if (!((_b = (_a = exchangeMatch) === null || _a === void 0 ? void 0 : _a.groups) === null || _b === void 0 ? void 0 : _b.rest)) {
+        if (!((_a = exchangeMatch === null || exchangeMatch === void 0 ? void 0 : exchangeMatch.groups) === null || _a === void 0 ? void 0 : _a.rest)) {
             const exchangeRate = yield getExchangeRate(1, "CAD", "CNY");
             return `${exchangeEmoji.get("CAD")}1加币 = ${exchangeRate.value.toFixed(2)}人民币${exchangeEmoji.get("CNY")}`;
         }
         // ?汇率 1加元换人民币
-        const exchangeDetail = (_c = exchangeMatch.groups) === null || _c === void 0 ? void 0 : _c.rest.match(exchangeDetailRegexp);
+        const exchangeDetail = (_b = exchangeMatch.groups) === null || _b === void 0 ? void 0 : _b.rest.match(exchangeDetailRegexp);
         if (exchangeDetail) {
             try {
                 const amount = parseFloat(exchangeDetail.groups.amount);
                 const from = exchangeDetail.groups.from.trim();
                 const to = exchangeDetail.groups.to.trim();
-                const fromValue = (_d = exchangeMap.get(from), (_d !== null && _d !== void 0 ? _d : ""));
-                const toValue = (_e = exchangeMap.get(to), (_e !== null && _e !== void 0 ? _e : ""));
+                const fromValue = (_c = exchangeMap.get(from)) !== null && _c !== void 0 ? _c : "";
+                const toValue = (_d = exchangeMap.get(to)) !== null && _d !== void 0 ? _d : "";
                 // console.log(amount, fromValue, toValue);
                 const exchangeRate = yield getExchangeRate(amount, fromValue, toValue);
                 let result = "";
@@ -83,7 +83,7 @@ function getExchangeText(text) {
                 result += ` = ${exchangeRate.value.toFixed(2)}${to}${exchangeEmoji.get(toValue)}`;
                 return result;
             }
-            catch (_f) {
+            catch (_e) {
                 return "支持的货币有 人民币/加币/美元/RMB/CAD/USD";
             }
         }

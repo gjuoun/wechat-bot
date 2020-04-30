@@ -17,6 +17,9 @@ const wechaty_1 = require("wechaty");
 const exchange_1 = require("./functions/exchange");
 const gasPrice_1 = require("./functions/gasPrice");
 const covidNS_1 = require("./functions/covidNS");
+const cangTouShi_1 = require("./functions/cangTouShi");
+const cangTouShiV2_1 = require("./functions/cangTouShiV2");
+const huiSheng_1 = require("./functions/huiSheng");
 const wechat = wechaty_1.Wechaty.instance();
 wechat.on("scan", (qrcode, status) => {
     qrcode_terminal_1.default.generate(qrcode);
@@ -41,6 +44,16 @@ wechat.on("message", (msg) => __awaiter(void 0, void 0, void 0, function* () {
     }
     if (text.match(covidNS_1.covidNewsRegexp)) {
         msg.say(yield covidNS_1.getCovidNewsText());
+    }
+    if (text.match(cangTouShi_1.cangToushiRegexp)) {
+        // msg.say(await generateCangTouShi(text))
+        msg.say(yield cangTouShiV2_1.generateCangTouShiV2(text));
+    }
+    if (text.match(huiSheng_1.huiShengRegexp)) {
+        const huiShengArr = huiSheng_1.getHuiSheng(text);
+        for (let line of huiShengArr) {
+            yield msg.say(line);
+        }
     }
 }));
 wechat.start();

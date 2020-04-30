@@ -14,10 +14,12 @@
   "license": "ISC",
   "dependencies": {
     "@types/axios": "^0.14.0",
+    "@types/cheerio": "^0.22.18",
     "@types/dotenv": "^8.2.0",
     "@types/lowdb": "^1.0.9",
     "@types/raven": "^2.5.3",
     "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
     "lowdb": "^1.0.0",
     "moment": "^2.24.0",

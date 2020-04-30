@@ -3,6 +3,9 @@ import { Wechaty } from "wechaty";
 import { getExchangeText, exchangeRegexp } from "./functions/exchange";
 import { getGasPricesText, gasRegexp } from "./functions/gasPrice";
 import { covidNewsRegexp, getCovidNewsText } from "./functions/covidNS";
+import { cangToushiRegexp, generateCangTouShi } from "./functions/cangTouShi";
+import { generateCangTouShiV2 } from "./functions/cangTouShiV2";
+import { huiShengRegexp, getHuiSheng } from "./functions/huiSheng";
 
 const wechat = Wechaty.instance();
 
@@ -39,6 +42,19 @@ wechat.on("message", async (msg) => {
   if (text.match(covidNewsRegexp)) {
     msg.say(await getCovidNewsText());
   }
+
+  if (text.match(cangToushiRegexp)) {
+    // msg.say(await generateCangTouShi(text))
+    msg.say(await generateCangTouShiV2(text))
+  }
+
+  if (text.match(huiShengRegexp)) {
+    const huiShengArr = getHuiSheng(text)
+    for (let line of huiShengArr) {
+      await msg.say(line)
+    }
+  }
+
 });
 
 wechat.start();
