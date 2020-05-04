@@ -20,6 +20,7 @@ const covidNS_1 = require("./functions/covidNS");
 const cangTouShi_1 = require("./functions/cangTouShi");
 const cangTouShiV2_1 = require("./functions/cangTouShiV2");
 const huiSheng_1 = require("./functions/huiSheng");
+const raider_1 = require("./functions/raider");
 const wechat = wechaty_1.Wechaty.instance();
 wechat.on("scan", (qrcode, status) => {
     qrcode_terminal_1.default.generate(qrcode);
@@ -34,7 +35,6 @@ wechat.on("message", (msg) => __awaiter(void 0, void 0, void 0, function* () {
     const receiver = msg.to();
     const text = msg.text();
     const room = msg.room();
-    console.log(text);
     // match (?|？)汇率 1加元
     if (text.match(exchange_1.exchangeRegexp)) {
         msg.say(yield exchange_1.getExchangeText(text));
@@ -53,6 +53,14 @@ wechat.on("message", (msg) => __awaiter(void 0, void 0, void 0, function* () {
         const huiShengArr = huiSheng_1.getHuiSheng(text);
         for (let line of huiShengArr) {
             yield msg.say(line);
+        }
+    }
+    if (text.match(raider_1.raiderRegexp)) {
+        console.log(sender === null || sender === void 0 ? void 0 : sender.id);
+        const messages = yield raider_1.getRaiderMessages(text);
+        // console.log(messages)
+        for (let onemsg of messages) {
+            yield msg.say(onemsg.text);
         }
     }
 }));

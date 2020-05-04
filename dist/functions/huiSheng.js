@@ -4,6 +4,9 @@ exports.huiShengRegexp = /^(\?|\uff1f)(\u56de\u58f0)\s*(?<huisheng>.+)$/;
 function getHuiSheng(text) {
     var _a;
     const textMatch = ((_a = text.match(exports.huiShengRegexp)) === null || _a === void 0 ? void 0 : _a.groups).huisheng;
+    if (textMatch.length > 12) {
+        return ['回声太长啦,12个字内就行'];
+    }
     let huiSheng = [];
     for (let i = 0; i < textMatch.length; i++) {
         huiSheng.push(textMatch.slice(i, textMatch.length));

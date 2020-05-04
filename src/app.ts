@@ -6,6 +6,7 @@ import { covidNewsRegexp, getCovidNewsText } from "./functions/covidNS";
 import { cangToushiRegexp, generateCangTouShi } from "./functions/cangTouShi";
 import { generateCangTouShiV2 } from "./functions/cangTouShiV2";
 import { huiShengRegexp, getHuiSheng } from "./functions/huiSheng";
+import { raiderRegexp, getRaiderMessages } from "./functions/raider";
 
 const wechat = Wechaty.instance();
 
@@ -28,7 +29,6 @@ wechat.on("message", async (msg) => {
   const text = msg.text();
   const room = msg.room();
 
-  console.log(text);
 
   // match (?|？)汇率 1加元
   if (text.match(exchangeRegexp)) {
@@ -52,6 +52,15 @@ wechat.on("message", async (msg) => {
     const huiShengArr = getHuiSheng(text)
     for (let line of huiShengArr) {
       await msg.say(line)
+    }
+  }
+
+  if (text.match(raiderRegexp)) {
+    console.log(sender?.id)
+    const messages = await getRaiderMessages(text)
+    // console.log(messages)
+    for (let onemsg of messages) {
+      await msg.say(onemsg.text)
     }
   }
 
